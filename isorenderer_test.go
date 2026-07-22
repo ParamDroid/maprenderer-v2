@@ -25,17 +25,22 @@ func TestIsoRenderer(t *testing.T) {
 
 	from := types.NewPos(0, 0, 0)
 	to := types.NewPos(15, 30, 15)
-	opts := &maprenderer.IsoRenderOpts{
-		CubeLen: 16,
+	views := []string{"ne", "nw", "sw", "se"}
+
+	for _, view := range views {
+		opts := &maprenderer.IsoRenderOpts{
+			CubeLen: 16,
+			View:    view,
+		}
+
+		img, err := maprenderer.RenderIsometric(m.GetNode, cm.GetColor, from, to, opts)
+		assert.NoError(t, err)
+		assert.NotNil(t, img)
+
+		f, err := os.OpenFile("output/iso-test-"+view+".png", os.O_CREATE|os.O_RDWR, 0755)
+		assert.NoError(t, err)
+
+		err = png.Encode(f, img)
+		assert.NoError(t, err)
 	}
-
-	img, err := maprenderer.RenderIsometric(m.GetNode, cm.GetColor, from, to, opts)
-	assert.NoError(t, err)
-	assert.NotNil(t, img)
-
-	f, err := os.OpenFile("output/iso-test.png", os.O_CREATE|os.O_RDWR, 0755)
-	assert.NoError(t, err)
-
-	err = png.Encode(f, img)
-	assert.NoError(t, err)
 }

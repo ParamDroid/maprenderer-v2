@@ -1,0 +1,41 @@
+# ======================
+# Executables
+# ======================
+*.exe
+*.out
+*.dll
+
+# ======================
+# Go build artifacts
+# ======================
+*.test
+*.prof
+
+# ======================
+# Python
+# ======================
+__pycache__/
+*.py[cod]
+
+# PyInstaller
+build/
+dist/
+*.spec
+
+# ======================
+# Generated images
+# ======================
+output/*.png
+Python_GUI/Pictures/*.png
+
+# ======================
+# IDEs
+# ======================
+.idea/
+.vscode/
+
+# ======================
+# OS files
+# ======================
+.DS_Store
+Thumbs.db

@@ -1,0 +1,6 @@
+These Compiled executables which are created as per basic need for the pictures of the builds
+
+To create you're own builds dont forget to check probe.go Try adding/removing the nodes as per your need.
+To add these fields to the python gui add the new values there i.e python_gui.py.
+
+Keep that in mind that while reworking this repository the main focused Operating enviroment is windows so there might be compatabilty issue with other Operating system might arise.

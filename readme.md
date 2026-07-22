@@ -1,49 +1,213 @@
+# MapRenderer v2
 
-Minetest map renderer go-library and cli
+A Go-based renderer for **Minetest/Luanti** worlds with both a command-line interface and a graphical user interface (GUI).
 
-![](https://github.com/minetest-go/maprenderer/workflows/test/badge.svg)
-[![Coverage Status](https://coveralls.io/repos/github/minetest-go/maprenderer/badge.svg)](https://coveralls.io/github/minetest-go/maprenderer)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
+![Go](https://img.shields.io/badge/Go-1.20+-00ADD8?logo=go)
+![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-blue)
 
-# Usage
+---
 
-```sh
-# show help and usage
-./maprenderer -help
+# Features
+
+- Render **Flat Maps**
+- Render **Isometric Maps**
+- Four isometric camera directions
+  - `ne`
+  - `nw`
+  - `se`
+  - `sw`
+- Multiple renderer profiles
+  - Normal
+  - No Trees
+  - No Flowers
+  - No Greenery
+  - Optional transparent output
+  - Automatic `colors.txt` support
+  - Windows GUI included
+
+
+---
+
+# Screenshots
+
+## Isometric
+
+![Isometric](output/iso-test.png)
+
+---
+
+## Flat
+
+![Flat](output/flat.png)
+
+---
+
+## GUI
+
+
+![GUI](output/GUI.png)
+
+---
+
+# Installation
+
+## Windows
+
+Clone the repository
+
+```bash
+git clone https://github.com/ParamDroid/maprenderer-v2.git
+cd maprenderer-v2
 ```
 
-## Isometric map
+Build
 
-```sh
-./maprenderer -world /home/user/.minetest/worlds/myworld/ -from -200,-50,-200 -to 200,100,200 -type isometric
+```bat
+build.bat
 ```
 
-Example output:
+or manually
 
-![](./iso_example.png)
-
-## Flat map
-
-```sh
-./maprenderer -world /home/user/.minetest/worlds/myworld/ -from -200,-50,-200 -to 200,100,200 -type map
+```bat
+set CGO_ENABLED=1
+go build -o Python_GUI\bin\maprenderer.exe ./cmd/maprenderer
 ```
 
-![](./map_example.png)
+---
 
-# Custom `colors.txt`
+## Linux
 
-If a custom color-mapping is needed a `colors.txt` can be placed in the world-directory in the following format:
+Clone
+
+```bash
+git clone https://github.com/ParamDroid/maprenderer-v2.git
+cd maprenderer-v2
 ```
-# node:name r g b
-nc_terrain:cobble 10 20 30
+
+Build
+
+```bash
+chmod +x build.sh
+./build.sh
 ```
 
-# Binary downloads
+or manually
 
-See: https://github.com/minetest-go/maprenderer/releases
+```bash
+export CGO_ENABLED=1
+go build -o Python_GUI/bin/maprenderer ./cmd/maprenderer
+```
+
+---
+
+# Python GUI
+
+Run directly
+
+```bash
+python Python_GUI/Python_GUI.py
+```
+
+or use the compiled executable
+
+```
+Python_GUI.exe
+```
+
+---
+
+# Command Line Usage
+
+Display help
+
+```bash
+maprenderer -help
+```
+
+Render a flat map
+
+```bash
+maprenderer \
+-world /path/to/world \
+-from -200,-50,-200 \
+-to 200,100,200 \
+-type map
+```
+
+Render an isometric map
+
+```bash
+maprenderer \
+-world /path/to/world \
+-from -200,-50,-200 \
+-to 200,100,200 \
+-type isometric \
+-view nw
+```
+
+---
+
+# Supported Isometric Views
+
+| View | Description |
+|------|-------------|
+| ne | North-East |
+| nw | North-West |
+| se | South-East |
+| sw | South-West |
+
+---
+
+# Renderer Profiles
+
+| Profile | Description |
+|----------|-------------|
+| Normal | Render everything |
+| No Trees | Removes tree nodes |
+| No Flowers | Removes flowers and flora |
+| No Greenery | Removes trees and flowers |
+
+---
+
+
+
+
+
+# Credits
+
+Original project:
+
+https://github.com/minetest-go/maprenderer
+
+This project extends the original renderer with:
+
+- Multiple camera directions
+- Python GUI
+- Additional renderer profiles
+- Improved usability
+- Project restructuring
+
+---
 
 # License
 
-Code: **MIT**
+Source code is licensed under the **MIT License**.
 
-Other assets
-* `colormapping/testdata/unifieddyes_palette_extended.png` GPL 2.0 https://github.com/mt-mods/unifieddyes/blob/master/textures/unifieddyes_palette_extended.png
+See the `LICENSE` file for details.
+
+---
+
+# Contributing
+
+Issues, feature requests, and pull requests are welcome.
+
+---
+
+# Acknowledgements
+
+Thanks to:
+
+- The original **maprenderer** project
+- Minetest / Luanti developers
+

@@ -10,11 +10,13 @@ import (
 
 type IsoTileRenderOpts struct {
 	CubeLen int
+	View    string
 }
 
 func NewDefaultIsoTileRenderOpts() *IsoTileRenderOpts {
 	return &IsoTileRenderOpts{
 		CubeLen: 8,
+		View:    "ne",
 	}
 }
 
@@ -23,19 +25,24 @@ func RenderIsometricTile(na types.NodeAccessor, cr types.ColorResolver, from, to
 		opts = NewDefaultIsoTileRenderOpts()
 	}
 
+	opts.View = NormalizeIsoView(opts.View)
+
 	min, max := types.SortPos(from, to)
 	size := to.Subtract(from).Add(types.NewPos(1, 1, 1))
-	top_size := types.NewPos(size.X(), 1, size.Z())
+	vsize := GetVirtualSize(size, opts.View)
+	top_size := types.NewPos(vsize.X(), 1, vsize.Z())
 
 	// extend the bounds for probing
 	probe_bounds_min := types.NewPos(min.X()-(size.Y()*2), min.Y(), min.Z()-(size.Y()*2))
 	probe_bounds_max := types.NewPos(max.X()+(size.Y()*2), max.Y(), max.Z()+(size.Y()*2))
 
 	width, height := GetIsometricImageSize(top_size, opts.CubeLen)
-	center_x, center_y := GetIsoCenterCubeOffset(size, opts.CubeLen)
+	center_x, center_y := GetIsoCenterCubeOffset(vsize, opts.CubeLen)
 	img := image.NewRGBA(image.Rectangle{Min: image.Point{}, Max: image.Point{X: width, Y: height}})
 
-	ipos := types.NewPos(1, -1, 1)
+	view_cfg := getIsoViewConfig(opts.View)
+
+	ipos := types.NewPos(view_cfg.probeX, -1, view_cfg.probeZ)
 
 	nodes := []*NodeWithColor{}
 
@@ -98,10 +105,12 @@ func RenderIsometricTile(na types.NodeAccessor, cr types.ColorResolver, from, to
 		}
 	}
 
-	slices.SortFunc(nodes, SortNodesWithColor)
+	slices.SortFunc(nodes, SortNodesForView(opts.View))
 
 	for _, n := range nodes {
 		rel_pos := n.Pos.Subtract(min)
+		vpos := GetVirtualPos(rel_pos, size, opts.View)
+
 		c1 := ColorAdjust(n.Color, 0)
 		// disable alpha channel
 		c1.A = 255
@@ -110,7 +119,7 @@ func RenderIsometricTile(na types.NodeAccessor, cr types.ColorResolver, from, to
 		c2 := ColorAdjust(c1, -10)
 		c3 := ColorAdjust(c1, 10)
 
-		x, y := GetIsoCubePosition(center_x, center_y, opts.CubeLen, rel_pos)
+		x, y := GetIsoCubePosition(center_x, center_y, opts.CubeLen, vpos)
 		err := DrawIsoCube(img, opts.CubeLen, x, y, c1, c2, c3)
 		if err != nil {
 			return nil, fmt.Errorf("DrawIsoCube error: %v", err)

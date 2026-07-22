@@ -33,6 +33,7 @@ var output = flag.String("output", "map.png", "png to write to")
 var from_pos = flag.String("from", "0,0,0", "from-position to use, in 'x,y,z' format")
 var to_pos = flag.String("to", "100,100,100", "to-position to use, in 'x,y,z' format")
 var world_dir = flag.String("world", "./", "world directory")
+var view_dir = flag.String("view", "ne", "isometric view direction: ne, nw, se, sw")
 
 func parsePos(str string) (*types.Pos, error) {
 	parts := strings.Split(str, ",")
@@ -111,6 +112,13 @@ func NewNodeAccessor(repo block.BlockRepository) types.NodeAccessor {
 func main() {
 	flag.Parse()
 
+	requestedView := *view_dir
+	view := strings.ToLower(requestedView)
+	*view_dir = maprenderer.NormalizeIsoView(view)
+	if view != *view_dir {
+		fmt.Printf("Warning: unsupported view '%s', defaulting to 'ne'\n", requestedView)
+	}
+
 	if *help {
 		flag.Usage()
 		return
@@ -171,6 +179,7 @@ func main() {
 	var img image.Image
 	if *map_type == "isometric" {
 		opts := maprenderer.NewDefaultIsoRenderOpts()
+		opts.View = *view_dir
 		img, err = maprenderer.RenderIsometric(na, cm.GetColor, from, to, opts)
 	} else {
 		opts := maprenderer.NewDefaultMapRenderOpts()
